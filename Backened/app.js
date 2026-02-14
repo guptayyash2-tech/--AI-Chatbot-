@@ -20,8 +20,21 @@ app.use(passport.initialize());
 app.get("/api/chat", (req, res) => {
   res.json({ reply: "Chat route working" });
 });
-app.post("/api/chat", (req, res) => {
-  res.json({ reply: "Chat route working" });
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ error: "Message is required" });
+    }
+
+    // Temporary echo response
+    return res.json({ reply: `You said: ${message}` });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Chat failed" });
+  }
 });
 
 
