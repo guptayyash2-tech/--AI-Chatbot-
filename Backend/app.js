@@ -17,8 +17,8 @@ app.use(cors({
 }));
 
 app.use(passport.initialize());
-app.get("/api/chat", (req, res) => {
-  res.json({ reply: "Chat route working" });
+app.get("/", (req, res) => {
+  res.send("AI Chatbot Backend is Running 🚀");
 });
 app.post("/api/chat", async (req, res) => {
   try {
