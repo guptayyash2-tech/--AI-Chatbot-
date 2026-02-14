@@ -9,7 +9,7 @@ const generatedtoken = (id) => {
 // ================= REGISTER =================
 const Userregister = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const {name, email, password } = req.body;
 
     // check existing user
     const user = await User.findOne({ email });
@@ -18,7 +18,7 @@ const Userregister = async (req, res) => {
     }
 
     // create user WITHOUT hashing
-    const newUser = await User.create({ email, password });
+    const newUser = await User.create({ name, email, password });
 
     const token = generatedtoken(newUser._id);
 
@@ -27,6 +27,7 @@ const Userregister = async (req, res) => {
       user: {
         id: newUser._id,
         email: newUser.email,
+        name: newUser.name,
       },
     });
   } catch (error) {

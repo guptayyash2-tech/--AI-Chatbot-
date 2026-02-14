@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { RegisterUser, setAuthToken } from "../Api";
+import { RegisterUser, SetAuthToken } from "../Api";
 
 const RegisterPage = () => {
+    const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,7 +16,7 @@ const RegisterPage = () => {
       setLoading(true);
       setError("");
 
-      const res = await RegisterUser({ email, password });
+      const res = await RegisterUser({ name,email, password });
 
       const { token } = res.data;
 
@@ -23,7 +24,7 @@ const RegisterPage = () => {
       localStorage.setItem("token", token);
 
       // set axios header
-      setAuthToken(token);
+      SetAuthToken(token);
 
       alert("Registration successful 🎉");
 
@@ -43,6 +44,14 @@ const RegisterPage = () => {
         <p className="text-sm text-gray-500 mb-6">
           Join now to start chatting with AI and explore features.
         </p>
+
+        <input
+  type="text"
+  placeholder="Full name"
+  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm mb-4"
+  value={name}
+  onChange={(e) => setName(e.target.value)}
+/>
 
         {/* Email */}
         <input

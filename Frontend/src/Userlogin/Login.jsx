@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GoogleLogin, LoginUser, setAuthToken } from "../Api";
+import { GoogleLogin, LoginUser, SetAuthToken } from "../Api";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -23,7 +23,7 @@ const LoginPage = () => {
       localStorage.setItem("token", token);
 
       // set axios header
-      setAuthToken(token);
+      SetAuthToken(token);
 
       alert("Login successful 🎉");
 
