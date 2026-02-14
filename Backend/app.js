@@ -20,6 +20,7 @@ app.use(passport.initialize());
 app.get("/", (req, res) => {
   res.send("AI Chatbot Backend is Running 🚀");
 });
+
 app.post("/api/chat", async (req, res) => {
   try {
     const { message } = req.body;
