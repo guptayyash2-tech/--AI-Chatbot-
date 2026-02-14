@@ -41,6 +41,11 @@ const LoginPage = () => {
           placeholder="Email address"
           className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black mb-4"
         />
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black mb-6"
+        />
 
         {/* Continue Button */}
         <button className="w-full bg-black text-white py-3 rounded-lg text-sm font-medium hover:opacity-90 transition">
