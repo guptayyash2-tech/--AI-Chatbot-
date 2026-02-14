@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { GoogleLogin, LoginUser, setAuthToken } from "../Api";
+import { useNavigate, Link } from "react-router-dom";
+import { RegisterUser, setAuthToken } from "../Api";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -10,12 +10,12 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const res = await LoginUser({ email, password });
+      const res = await RegisterUser({ email, password });
 
       const { token } = res.data;
 
@@ -25,11 +25,11 @@ const LoginPage = () => {
       // set axios header
       setAuthToken(token);
 
-      alert("Login successful 🎉");
+      alert("Registration successful 🎉");
 
       navigate("/"); // go to home
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -38,30 +38,11 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f7f7f8]">
       <div className="bg-white w-[380px] p-10 rounded-2xl shadow-md text-center">
-        <h1 className="text-2xl font-semibold mb-3">Log in or sign up</h1>
+        <h1 className="text-2xl font-semibold mb-3">Create your account</h1>
 
         <p className="text-sm text-gray-500 mb-6">
-          You’ll get smarter responses and can upload files, images, and more.
+          Join now to start chatting with AI and explore features.
         </p>
-
-        {/* Google Login */}
-        <button
-          onClick={GoogleLogin}
-          className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg py-3 hover:bg-gray-50 transition"
-        >
-          <img
-            src="https://www.svgrepo.com/show/475656/google-color.svg"
-            alt="Google"
-            className="w-5 h-5"
-          />
-          <span className="text-sm font-medium">Continue with Google</span>
-        </button>
-
-        <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-xs text-gray-400">OR</span>
-          <div className="flex-1 h-px bg-gray-200" />
-        </div>
 
         {/* Email */}
         <input
@@ -84,15 +65,22 @@ const LoginPage = () => {
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
         <button
-          onClick={handleLogin}
+          onClick={handleRegister}
           disabled={loading}
           className="w-full bg-black text-white py-3 rounded-lg text-sm font-medium"
         >
-          {loading ? "Processing..." : "Continue"}
+          {loading ? "Creating account..." : "Register"}
         </button>
+
+        <p className="text-sm text-gray-500 mt-6">
+          Already have an account?{" "}
+          <Link to="/login" className="text-black font-medium hover:underline">
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

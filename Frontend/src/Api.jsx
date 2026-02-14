@@ -6,11 +6,11 @@ const BASE_URL =
 
 export const API = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true
+  withCredentials: true,
 });
 
-
-export const SetAuthToken = (token) => {
+// Set token in header
+export const setAuthToken = (token) => {
   if (token) {
     API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   } else {
@@ -18,15 +18,16 @@ export const SetAuthToken = (token) => {
   }
 };
 
+// Auth APIs
 export const RegisterUser = (data) =>
   API.post("/api/user/register", data);
 
 export const LoginUser = (data) =>
   API.post("/api/user/login", data);
 
+// Google login redirect
 export const GoogleLogin = () => {
-  window.location.href =
-    "https://ai-chatbot-p386.onrender.com/auth/google";
+  window.location.href = `${BASE_URL}/auth/google`;
 };
 
 export default API;

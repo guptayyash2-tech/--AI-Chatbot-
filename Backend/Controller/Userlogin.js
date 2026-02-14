@@ -1,29 +1,68 @@
 const jwt = require("jsonwebtoken");
 const User = require("../Mongo/Usermongo");
 
+// Generate JWT token
 const generatedtoken = (id) => {
-    return jwt.sign({id},process.env.JWT_SECRET,{expiresIn:"1d"});
-}
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "25d" });
+};
 
+// ================= REGISTER =================
+const Userregister = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-const Userregister=async(req,res)=>{
-    const {email,password}=req.body;
-    const user = await User.findOne({email});
-    if(user){
-        return res.status(404).json({message:"User already exists"});
+    // check existing user
+    const user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ message: "User already exists" });
     }
-    
-    const newUser = await User.create({email,password});
+
+    // create user WITHOUT hashing
+    const newUser = await User.create({ email, password });
+
     const token = generatedtoken(newUser._id);
+
     res.json({
-        token,
-        user:{
-            id:newUser._id,
-            email:newUser.email
-        }
-    })
-}
+      token,
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
+// ================= LOGIN =================
+const Userlogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
+    const user = await User.findOne({ email });
 
-module.exports = Userregister;
+    // check email
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    // compare plain password
+    if (user.password !== password) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    const token = generatedtoken(user._id);
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { Userregister, Userlogin };
