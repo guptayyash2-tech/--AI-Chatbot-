@@ -17,6 +17,10 @@ app.use(cors({
 }));
 
 app.use(passport.initialize());
+app.get("/", (req, res) => {
+  res.json({ status: "OK", message: "AI Chatbot backend is live 🚀" });
+});
+
 
 mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("✅ MongoDB Connected"))
