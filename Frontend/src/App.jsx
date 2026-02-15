@@ -7,6 +7,8 @@ import RegisterPage from "./Userlogin/Regiser";
 import { Routes, Route } from "react-router-dom";
 import { SetAuthToken } from "./Api";
 import AccountPage from "./Userlogin/Account";
+import PrivateRoute from "./Userlogin/Productroute";
+import ChatPage from "./innerchat/Innerchat";
 
 function App() {
 
@@ -17,7 +19,15 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/chatpage" element={<Innerchat />} />
+   <Route
+  path="/chat"
+  element={
+    <PrivateRoute>
+      <ChatPage />
+    </PrivateRoute>
+  }
+/>
+
       <Route path="/account" element={<AccountPage />} />
     </Routes>
   );

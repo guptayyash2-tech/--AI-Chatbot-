@@ -1,78 +1,78 @@
 import { useState } from "react";
+import { LoginUser } from "../Api";
 import { useNavigate, Link } from "react-router-dom";
-import { LoginUser, SetAuthToken } from "../Api";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      setError("Please fill all fields");
-      return;
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
 
     try {
-      setLoading(true);
-      setError("");
+      const { data } = await LoginUser(form);
 
-      const { data } = await LoginUser({ email, password });
-
-      const token = data.token;
-
-      localStorage.setItem("token", token);
-      SetAuthToken(token);
-
-      navigate("/chatpage");
+      localStorage.setItem("token", data.token);
+      navigate("/chat");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
+      setError("Invalid email or password");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f7f7f8]">
-      <div className="bg-white w-[380px] p-10 rounded-2xl shadow-md">
-        <h1 className="text-2xl font-semibold mb-6 text-center">
-          Welcome back
-        </h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black px-6">
+      <div className="w-[420px] bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8 text-white">
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border rounded-lg px-4 py-3 mb-4"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full border rounded-lg px-4 py-3 mb-4"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold">Welcome Back</h1>
+          <p className="text-sm text-gray-300 mt-2">
+            Login to continue chatting
+          </p>
+        </div>
 
         {error && (
-          <p className="text-red-500 text-sm mb-3 text-center">{error}</p>
+          <p className="text-red-400 text-sm text-center mb-4">{error}</p>
         )}
 
-        <button
-          onClick={handleLogin}
-          disabled={loading}
-          className="w-full bg-black text-white py-3 rounded-lg font-medium"
-        >
-          {loading ? "Logging in..." : "Login"}
-        </button>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="text-xs text-gray-300">Email</label>
+            <input
+              type="email"
+              required
+              placeholder="you@example.com"
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              className="w-full mt-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 
+              text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
 
-        <p className="text-sm mt-4 text-center">
+          <div>
+            <label className="text-xs text-gray-300">Password</label>
+            <input
+              type="password"
+              required
+              placeholder="••••••••"
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              className="w-full mt-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 
+              text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full mt-4 bg-gradient-to-r from-indigo-500 to-purple-600 py-3 rounded-xl font-semibold shadow-lg hover:scale-[1.02] transition"
+          >
+            Login
+          </button>
+        </form>
+
+        <p className="text-center text-sm text-gray-400 mt-6">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-black font-semibold">
+          <Link to="/register" className="text-indigo-400 hover:underline">
             Register
           </Link>
         </p>
