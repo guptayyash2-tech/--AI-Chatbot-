@@ -27,9 +27,9 @@ export const LoginUser = (data) =>
 
 // CHAT
 export const SendMessage = (message) =>
-  API.post("/api/chat", { message });
+  API.post("/api/user/chatapi", { message });
 
 export const GetChatHistory = () =>
-  API.get("/api/chat/history");
+  API.get("/api/user/chat/history");
 
 export default API;
