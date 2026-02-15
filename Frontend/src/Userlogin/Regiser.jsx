@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { RegisterUser, SetAuthToken } from "../Api";
 
 const RegisterPage = () => {
-    const [name, setName] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,8 @@ const RegisterPage = () => {
       setLoading(true);
       setError("");
 
-      const res = await RegisterUser({ name,email, password });
+      // send name, email, password to backend
+      const res = await RegisterUser({ name, email, password });
 
       const { token } = res.data;
 
@@ -28,7 +29,7 @@ const RegisterPage = () => {
 
       alert("Registration successful 🎉");
 
-      navigate("/"); // go to home
+      navigate("/"); // redirect to home
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
     } finally {
@@ -42,16 +43,17 @@ const RegisterPage = () => {
         <h1 className="text-2xl font-semibold mb-3">Create your account</h1>
 
         <p className="text-sm text-gray-500 mb-6">
-          Join now to start chatting with AI and explore features.
+          Join now to start chatting with AI.
         </p>
 
+        {/* Name */}
         <input
-  type="text"
-  placeholder="Full name"
-  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm mb-4"
-  value={name}
-  onChange={(e) => setName(e.target.value)}
-/>
+          type="text"
+          placeholder="Full name"
+          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm mb-4"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
         {/* Email */}
         <input

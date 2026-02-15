@@ -27,7 +27,7 @@ const LoginPage = () => {
 
       alert("Login successful 🎉");
 
-      navigate("/"); // go to home
+      navigate("/chatpage"); // go to home
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     } finally {
