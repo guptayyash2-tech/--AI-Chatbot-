@@ -28,7 +28,7 @@ const RegisterPage = () => {
 
       localStorage.setItem("token", token);
       SetAuthToken(token);
-      navigate("/chat");
+      navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
     } finally {
