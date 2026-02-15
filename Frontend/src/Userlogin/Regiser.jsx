@@ -8,14 +8,24 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
-  const handleRegister = async () => {
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    if (!name || !email || !password) {
+      setError("All fields are required");
+      return;
+    }
+
     try {
       setLoading(true);
       setError("");
+
       const res = await RegisterUser({ name, email, password });
       const { token } = res.data;
+
       localStorage.setItem("token", token);
       SetAuthToken(token);
       navigate("/chat");
@@ -30,7 +40,6 @@ const RegisterPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black px-6">
       <div className="w-[420px] bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8 text-white">
 
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold">Create Account</h1>
           <p className="text-sm text-gray-300 mt-2">
@@ -42,7 +51,7 @@ const RegisterPage = () => {
           <p className="text-red-400 text-sm text-center mb-4">{error}</p>
         )}
 
-        <div className="space-y-4">
+        <form onSubmit={handleRegister} className="space-y-4">
           <input
             type="text"
             placeholder="Full name"
@@ -71,13 +80,13 @@ const RegisterPage = () => {
           />
 
           <button
-            onClick={handleRegister}
+            type="submit"
             disabled={loading}
             className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 py-3 rounded-xl font-semibold shadow-lg hover:scale-[1.02] transition disabled:opacity-50"
           >
             {loading ? "Creating account..." : "Register"}
           </button>
-        </div>
+        </form>
 
         <p className="text-center text-sm text-gray-400 mt-6">
           Already have an account?{" "}
