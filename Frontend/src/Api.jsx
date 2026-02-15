@@ -9,7 +9,6 @@ export const API = axios.create({
   withCredentials: true,
 });
 
-// Attach token
 export const SetAuthToken = (token) => {
   if (token) {
     API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -17,6 +16,10 @@ export const SetAuthToken = (token) => {
     delete API.defaults.headers.common["Authorization"];
   }
 };
+
+// auto attach on refresh
+const token = localStorage.getItem("token");
+if (token) SetAuthToken(token);
 
 // AUTH
 export const RegisterUser = (data) =>
@@ -31,5 +34,3 @@ export const SendMessage = (message) =>
 
 export const GetChatHistory = () =>
   API.get("/api/user/chat/history");
-
-export default API;

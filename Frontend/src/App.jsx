@@ -9,12 +9,7 @@ import { SetAuthToken } from "./Api";
 
 function App() {
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      SetAuthToken(token);
-    }
-  }, []);
+
 
   return (
     <Routes>
