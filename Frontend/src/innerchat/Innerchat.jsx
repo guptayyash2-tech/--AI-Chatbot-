@@ -1,4 +1,4 @@
-import ChatArea from "./ChatArea";
+import ChatArea from "./Chatarea";
 import Sidebar from "./Sidebar";
 
 import { useState } from "react";
@@ -22,7 +22,7 @@ const ChatPage = () => {
       />
 
       <div className="flex-1">
-        <ChatArea activeChat={activeChat} />
+       <ChatArea activeChat={activeChat} />
       </div>
     </div>
   );
