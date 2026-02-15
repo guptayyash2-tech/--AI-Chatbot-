@@ -10,7 +10,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // stable production model
 const model = genAI.getGenerativeModel({
-  model: "models/gemini-2.5-pro"
+  model: "models/gemini-2.5-flash"
 });
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
