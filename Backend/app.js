@@ -10,8 +10,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://frontend-3197.onrender.com"
+  process.env.FRONTEND_URL,
+  "http://localhost:5173"
 ];
 
 app.use(cors({
@@ -20,7 +20,7 @@ app.use(cors({
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error("CORS blocked: " + origin));
     }
   },
   credentials: true
