@@ -9,14 +9,21 @@ const model = genAI.getGenerativeModel({
 
 const chatWithAI = async (req, res) => {
   try {
+    console.log("STEP 1: Body =", req.body);
+    console.log("STEP 2: User =", req.user);
+
     const { message } = req.body;
-    if (!message) return res.status(400).json({ error: "Message required" });
+    if (!message) return res.status(400).json({ error: "No message" });
+
+    console.log("STEP 3: Sending to Gemini...");
 
     const result = await model.generateContent(message);
 
-    const reply =
-      result?.response?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "No response from AI";
+    console.log("STEP 4: Gemini result =", JSON.stringify(result, null, 2));
+
+    const reply = result.response.text();
+
+    console.log("STEP 5: Reply =", reply);
 
     const chat = await Chat.create({
       user: req.user._id,
@@ -24,13 +31,13 @@ const chatWithAI = async (req, res) => {
       aiReply: reply
     });
 
+    console.log("STEP 6: Saved");
+
     res.json(chat);
+
   } catch (error) {
-    console.error("🔥 Gemini Error:", error);
-    res.status(500).json({
-      error: "Gemini failed",
-      message: error.message
-    });
+    console.error("🔥 FULL ERROR:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
