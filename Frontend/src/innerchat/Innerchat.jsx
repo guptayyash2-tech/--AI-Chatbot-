@@ -1,5 +1,6 @@
-import Sidebar from "./Sidebar";
 import ChatArea from "./ChatArea";
+import Sidebar from "./Sidebar";
+
 import { useState } from "react";
 
 const ChatPage = () => {
