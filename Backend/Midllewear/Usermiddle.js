@@ -1,8 +1,7 @@
-const jwt =  require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const User = require("../Mongo/Usermongo");
 
-
-const adminprotect = async (req, res, next) => {
+const protect = async (req, res, next) => {
   let token;
 
   if (
@@ -13,16 +12,19 @@ const adminprotect = async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      req.admin = await User.findById(decoded.id).select("-password");
-      if (!req.admin) return res.status(404).json({ message: "User not found" });
+      // attach user
+      req.user = await User.findById(decoded.id).select("-password");
+      if (!req.user) {
+        return res.status(404).json({ message: "User not found" });
+      }
 
-      next();
-    } catch (error) {
+      return next();
+    } catch (err) {
       return res.status(401).json({ message: "Token invalid" });
     }
   }
 
-  if (!token) return res.status(401).json({ message: "No token" });
+  return res.status(401).json({ message: "No token" });
 };
 
-module.exports = adminprotect;
+module.exports = protect;

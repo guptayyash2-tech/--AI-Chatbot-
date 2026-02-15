@@ -9,64 +9,30 @@ const model = genAI.getGenerativeModel({
 
 const chatWithAI = async (req, res) => {
   try {
-    console.log("➡️ Chat request:", req.body);
-    console.log("➡️ User:", req.user);
-
     const { message } = req.body;
 
-    if (!message) {
-      return res.status(400).json({ error: "Message is required" });
-    }
-
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ error: "Unauthorized user" });
-    }
-
     const result = await model.generateContent(message);
-
-    if (!result || !result.response) {
-      throw new Error("Gemini returned empty response");
-    }
-
     const reply = result.response.text();
-    console.log("🤖 Gemini reply:", reply);
 
     const chat = await Chat.create({
-      user: req.user.id,
+      user: req.user._id,
       userMessage: message,
       aiReply: reply
     });
 
     res.json(chat);
-
   } catch (error) {
-    console.error("🔥 FULL ERROR:", error);
-    console.error("🔥 MESSAGE:", error.message);
-    console.error("🔥 STACK:", error.stack);
-
-    res.status(500).json({
-      error: "Gemini API failed",
-      message: error.message,
-      stack: error.stack
-    });
+    console.error("🔥 Gemini Error:", error.message);
+    res.status(500).json({ error: error.message });
   }
 };
 
 const chathistory = async (req, res) => {
   try {
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ error: "Unauthorized user" });
-    }
-
-    const chats = await Chat.find({ user: req.user.id }).sort({ createdAt: 1 });
+    const chats = await Chat.find({ user: req.user._id }).sort({ createdAt: 1 });
     res.json(chats);
-
   } catch (error) {
-    console.error("🔥 DB ERROR:", error);
-    res.status(500).json({
-      error: "Database error",
-      message: error.message
-    });
+    res.status(500).json({ error: "Database error" });
   }
 };
 

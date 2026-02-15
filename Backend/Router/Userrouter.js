@@ -1,8 +1,9 @@
 const express = require("express");
 const { Userregister, Userlogin } = require("../Controller/Userlogin");
 
-const adminprotect = require("../Midllewear/Usermiddle");
+
 const { chatWithAI, chathistory } = require("../Openai/openai");
+const protect = require("../Midllewear/Usermiddle");
 
 
 const userrouter = express.Router();
@@ -12,7 +13,7 @@ userrouter.post("/register", Userregister);
 userrouter.post("/login", Userlogin);
 
 // CHAT (protected)
-userrouter.post("/chatapi", adminprotect, chatWithAI);
-userrouter.get("/chat/history", adminprotect, chathistory);
+userrouter.post("/chatapi", protect, chatWithAI);
+userrouter.get("/chat/history", protect, chathistory);
 
 module.exports = userrouter;
