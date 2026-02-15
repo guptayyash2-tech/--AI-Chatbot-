@@ -1,5 +1,5 @@
 const express = require("express");
-const { Userregister, Userlogin } = require("../Controller/Userlogin");
+const { Userregister, Userlogin, Userlogout, getMe } = require("../Controller/Userlogin");
 
 
 const { chatWithAI, chathistory } = require("../Openai/openai");
@@ -11,6 +11,8 @@ const userrouter = express.Router();
 // AUTH
 userrouter.post("/register", Userregister);
 userrouter.post("/login", Userlogin);
+userrouter.get("/getme", protect, getMe);
+userrouter.post("/logout",protect,Userlogout)
 
 // CHAT (protected)
 userrouter.post("/chatapi", protect, chatWithAI);
