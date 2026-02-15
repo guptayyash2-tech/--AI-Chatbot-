@@ -3,77 +3,55 @@ const bcrypt = require("bcryptjs");
 const User = require("../Mongo/Usermongo");
 
 const generateToken = (userId) => {
-  if (!process.env.JWT_SECRET) {
-    throw new Error("JWT_SECRET is not defined");
-  }
-
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: "25d",
+    expiresIn: "25d"
   });
 };
 
-// ================= REGISTER =================
+// REGISTER
 const Userregister = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: "User already exists" });
-    }
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(400).json({ message: "User already exists" });
 
-    // hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashed = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-    });
+    const user = await User.create({ name, email, password: hashed });
 
-    const token = generateToken(newUser._id); // FIXED
+    const token = generateToken(user._id);
 
     res.status(201).json({
       token,
-      user: {
-        id: newUser._id,
-        email: newUser.email,
-        name: newUser.name,
-      },
+      user: { id: user._id, name: user.name, email: user.email }
     });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
-// ================= LOGIN =================
+// LOGIN
 const Userlogin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = generateToken(user._id); // FIXED
+    const token = generateToken(user._id);
 
     res.json({
       token,
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-      },
+      user: { id: user._id, name: user.name, email: user.email }
     });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
