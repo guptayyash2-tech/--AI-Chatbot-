@@ -1,52 +1,38 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const chatmongo = require("../Mongo/chatmongo");
+const Chat = require("../Mongo/chatmongo");
 
-const genAI = new GoogleGenerativeAI(process.env.OPENAI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// ✅ Use latest supported text model
 const model = genAI.getGenerativeModel({
-  model: "gemini-3-flash-preview"
+  model: "gemini-1.5-flash"
 });
 
 const chatWithAI = async (req, res) => {
   try {
     const { message } = req.body;
 
-    // 1. Get AI reply
     const result = await model.generateContent(message);
     const reply = result.response.text();
 
-    // 2. Save to MongoDB
-    const chat = await chatmongo.create({
+    const chat = await Chat.create({
+      user: req.user.id, // 🔐 from JWT
       userMessage: message,
       aiReply: reply
     });
 
-    // 3. Send response once
     res.json(chat);
-
   } catch (error) {
-    console.error("Gemini Error:", error);
-    res.status(500).json({
-      error: "Gemini API error",
-      details: error.message
-    });
+    res.status(500).json({ error: "Gemini error" });
   }
 };
 
-
 const chathistory = async (req, res) => {
   try {
-    const chats = await chatmongo.find().sort({ createdAt: 1 });
+    const chats = await Chat.find({ user: req.user.id }).sort({ createdAt: 1 });
     res.json(chats);
   } catch (error) {
-    console.error("MongoDB Error:", error);
-    res.status(500).json({
-        error: "Database error",
-        details: error.message
-    });
-}
+    res.status(500).json({ error: "Database error" });
+  }
 };
 
-module.exports = { chatWithAI, chathistory }    ;
-
+module.exports = { chatWithAI, chathistory };

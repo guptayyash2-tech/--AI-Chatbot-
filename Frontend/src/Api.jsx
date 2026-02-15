@@ -9,7 +9,7 @@ export const API = axios.create({
   withCredentials: true,
 });
 
-// Set token in header
+// Attach token
 export const SetAuthToken = (token) => {
   if (token) {
     API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -18,16 +18,18 @@ export const SetAuthToken = (token) => {
   }
 };
 
-// Auth APIs
+// AUTH
 export const RegisterUser = (data) =>
   API.post("/api/user/register", data);
 
 export const LoginUser = (data) =>
   API.post("/api/user/login", data);
 
-// Google login redirect
-export const GoogleLogin = () => {
-  window.location.href = `${BASE_URL}/auth/google`;
-};
+// CHAT
+export const SendMessage = (message) =>
+  API.post("/api/chat", { message });
+
+export const GetChatHistory = () =>
+  API.get("/api/chat/history");
 
 export default API;
