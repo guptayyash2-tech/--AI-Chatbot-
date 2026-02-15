@@ -3,8 +3,9 @@ const Chat = require("../Mongo/chatmongo");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// stable model
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-pro"
+  model: "gemini-1.5-flash"
 });
 
 const chatWithAI = async (req, res) => {
@@ -12,8 +13,20 @@ const chatWithAI = async (req, res) => {
     const { message } = req.body;
     if (!message) return res.status(400).json({ error: "No message" });
 
-    const result = await model.generateContent(message);
-    const reply = result.response.text();
+    let reply;
+
+    // retry 3 times if Gemini is busy
+    for (let i = 0; i < 3; i++) {
+      try {
+        const result = await model.generateContent(message);
+        reply = result.response.text();
+        break;
+      } catch (err) {
+        console.error(`Gemini attempt ${i + 1} failed`);
+        if (i === 2) throw err;
+        await new Promise(r => setTimeout(r, 1000));
+      }
+    }
 
     const chat = await Chat.create({
       user: req.user._id,
@@ -22,9 +35,12 @@ const chatWithAI = async (req, res) => {
     });
 
     res.json(chat);
+
   } catch (error) {
-    console.error("Gemini Error:", error.message);
-    res.status(500).json({ error: error.message });
+    console.error("🔥 Gemini Error:", error.message);
+    res.status(500).json({
+      error: "AI is busy. Please try again."
+    });
   }
 };
 

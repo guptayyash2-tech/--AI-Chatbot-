@@ -31,7 +31,7 @@ export const LoginUser = (data) =>
 
 // Get logged in user
 export const GetMe = () =>
-  API.get("/api/user/me");
+  API.get("/api/user/getme");
 
 // Logout user
 
