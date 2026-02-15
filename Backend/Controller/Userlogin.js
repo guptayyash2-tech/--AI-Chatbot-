@@ -67,7 +67,7 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { Userregister, Userlogin, Userlogout, getMe };
+module.exports = { Userregister, Userlogin, getMe };
 
 
 

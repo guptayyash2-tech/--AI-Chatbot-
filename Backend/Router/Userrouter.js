@@ -1,5 +1,5 @@
 const express = require("express");
-const { Userregister, Userlogin, Userlogout, getMe } = require("../Controller/Userlogin");
+const { Userregister, Userlogin,  getMe } = require("../Controller/Userlogin");
 
 
 const { chatWithAI, chathistory } = require("../Openai/openai");
