@@ -34,10 +34,7 @@ export const GetMe = () =>
   API.get("/api/user/me");
 
 // Logout user
-export const LogoutUser = () => {
-  localStorage.removeItem("token");
-  SetAuthToken(null);
-};
+
 
 // ---------- CHAT ----------
 export const SendMessage = (message) =>

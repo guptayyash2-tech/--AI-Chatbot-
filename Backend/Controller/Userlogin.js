@@ -54,14 +54,7 @@ const Userlogin = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-// LOGOUT (stateless JWT)
-const Userlogout = async (req, res) => {
-  try {
-    res.json({ message: "Logged out successfully" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+
 const getMe = async (req, res) => {
   try {
     res.json({

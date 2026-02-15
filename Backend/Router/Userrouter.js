@@ -12,7 +12,7 @@ const userrouter = express.Router();
 userrouter.post("/register", Userregister);
 userrouter.post("/login", Userlogin);
 userrouter.get("/getme", protect, getMe);
-userrouter.post("/logout",protect,Userlogout)
+
 
 // CHAT (protected)
 userrouter.post("/chatapi", protect, chatWithAI);
