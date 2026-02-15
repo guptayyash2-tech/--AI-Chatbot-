@@ -1,7 +1,8 @@
 const express = require("express");
 const { Userregister, Userlogin } = require("../Controller/Userlogin");
-const { chatWithAI, chathistory } = require("../Controller/chatController");
+
 const adminprotect = require("../Midllewear/Usermiddle");
+const { chatWithAI, chathistory } = require("../Openai/openai");
 
 
 const userrouter = express.Router();
