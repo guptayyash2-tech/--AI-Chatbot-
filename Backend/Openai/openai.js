@@ -1,55 +1,70 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const Chat = require("../Mongo/chatmongo");
 
+// init once
+if (!process.env.GEMINI_API_KEY) {
+  throw new Error("GEMINI_API_KEY missing in environment");
+}
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// stable model
+// stable production model
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-pro"
+  model: "gemini-1.5-flash",
 });
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const chatWithAI = async (req, res) => {
   try {
     const { message } = req.body;
-    if (!message) return res.status(400).json({ error: "No message" });
+    if (!message?.trim()) {
+      return res.status(400).json({ error: "Message is required" });
+    }
 
-    let reply;
+    let reply = null;
 
-    // retry 3 times if Gemini is busy
-    for (let i = 0; i < 3; i++) {
+    // retry up to 3 times
+    for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         const result = await model.generateContent(message);
-        reply = result.response.text();
+        reply = result?.response?.text?.();
+
+        if (!reply) throw new Error("Empty AI response");
         break;
       } catch (err) {
-        console.error(`Gemini attempt ${i + 1} failed`);
-        if (i === 2) throw err;
-        await new Promise(r => setTimeout(r, 1000));
+        console.error(`⚠ Gemini attempt ${attempt} failed:`, err.message);
+        if (attempt === 3) throw err;
+        await sleep(1200);
       }
     }
 
     const chat = await Chat.create({
       user: req.user._id,
       userMessage: message,
-      aiReply: reply
+      aiReply: reply,
     });
 
     res.json(chat);
 
   } catch (error) {
-    console.error("🔥 Gemini Error:", error.message);
+    console.error("🔥 Gemini Controller Error:", error.message);
     res.status(500).json({
-      error: "AI is busy. Please try again."
+      error: "AI is busy. Please try again in a moment.",
     });
   }
 };
 
 const chathistory = async (req, res) => {
   try {
-    const chats = await Chat.find({ user: req.user._id }).sort({ createdAt: 1 });
+    const chats = await Chat.find({ user: req.user._id })
+      .sort({ createdAt: 1 })
+      .lean();
+
     res.json(chats);
-  } catch {
-    res.status(500).json({ error: "Database error" });
+  } catch (err) {
+    console.error("❌ Chat history error:", err.message);
+    res.status(500).json({ error: "Failed to load chat history" });
   }
 };
 
